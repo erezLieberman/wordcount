@@ -3,3 +3,4 @@ test2.txt
 test2_.txt
 package-lock.json
 yarn-lock
+.env
