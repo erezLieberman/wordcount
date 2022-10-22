@@ -42,7 +42,7 @@ export const getData = async (value: string, type: string, next: NextFunction): 
     return data;
 }
 
-export const addWordsToDB = (dataAsWords: any[], result: Result) => {
+export const addWordsToDB = (dataAsWords: string[], result: Result): void => {
     dataAsWords.forEach((word: string) => {
         word = cleanUpString(word);
 

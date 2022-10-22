@@ -14,9 +14,9 @@ const wordStatisticsHandler = (req, res) => {
         return;
     }
     let result;
-    if (((0, utils_1.isString)(word) && typeof word === 'string' || word instanceof String)) {
+    if (((0, utils_1.isString)(word) && typeof word === 'string')) {
         //isString by itself will be enough here but i keep the other checks to avoid ts warnings and errors
-        word = word.toLowerCase();
+        word = (0, utils_1.cleanUpString)(word);
         const data = (0, utils_1.getDataFromDbFile)();
         result = data[word] || 0;
     }

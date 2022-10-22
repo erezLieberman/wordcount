@@ -55,7 +55,7 @@ const wordCounterHandler = (req, res, next) => __awaiter(void 0, void 0, void 0,
     let data = yield (0, wordCounterService_1.getData)(value, type, next);
     if (data) {
         const result = (0, utils_1.getDataFromDbFile)();
-        const dataAsWords = data.toLowerCase().split(" ");
+        const dataAsWords = data.split(" ");
         (0, wordCounterService_1.addWordsToDB)(dataAsWords, result);
         fs.writeFileSync(dbFile, JSON.stringify(result));
         res

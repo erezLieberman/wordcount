@@ -1,7 +1,8 @@
 import * as fs from 'fs';
+import { ParsedQs } from 'qs';
 
-export const cleanUpString = (s:string) => {
-    return s.replace(/[^a-z]/gi, '');
+export const cleanUpString = (s: string | (ParsedQs & String) | (string[] & String) | (ParsedQs[] & String)) => {
+    return s.toLowerCase().replace(/[^a-z]/gi, '');
 }
 
 const dbFile = process.cwd() + "\\db.json";

@@ -9,7 +9,7 @@ dotenv.config();
 
 const dbFile = process.cwd() + "\\db.json"
 
-export const wordCounterHandler = async (req: Request, res: Response, next: NextFunction) => {
+export const wordCounterHandler = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 
     const { value, type } = req.body;
 
@@ -26,7 +26,7 @@ export const wordCounterHandler = async (req: Request, res: Response, next: Next
     if(data){
         const result = getDataFromDbFile();
 
-        const dataAsWords = data.toLowerCase().split(" ");
+        const dataAsWords = data.split(" ");
     
         addWordsToResult(dataAsWords, result)
     

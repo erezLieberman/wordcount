@@ -1,9 +1,9 @@
 import { StatusCodes } from "http-status-codes";
-import { getDataFromDbFile, isString } from "../utils/utils";
+import { cleanUpString, getDataFromDbFile, isString } from "../utils/utils";
 import { Request, Response } from 'express';
 import { validateWordStatisticsBody } from "../services/wordStatistcsService";
 
-export const wordStatisticsHandler = (req: Request, res: Response) => {
+export const wordStatisticsHandler = (req: Request, res: Response): void => {
 
     let word = req.query.word;
     const isNotValidMessage = validateWordStatisticsBody(word);
@@ -16,9 +16,9 @@ export const wordStatisticsHandler = (req: Request, res: Response) => {
 
     let result;
 
-    if((isString(word) && typeof word === 'string' || word instanceof String)){
+    if((isString(word) && typeof word === 'string')){
       //isString by itself will be enough here but i keep the other checks to avoid ts warnings and errors
-      word = word.toLowerCase();
+      word = cleanUpString(word);
       const data = getDataFromDbFile();
       result = data[word] || 0;
     }

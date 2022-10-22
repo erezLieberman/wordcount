@@ -26,7 +26,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.isNotEmpty = exports.isString = exports.getDataFromDbFile = exports.cleanUpString = void 0;
 const fs = __importStar(require("fs"));
 const cleanUpString = (s) => {
-    return s.replace(/[^a-z]/gi, '');
+    return s.toLowerCase().replace(/[^a-z]/gi, '');
 };
 exports.cleanUpString = cleanUpString;
 const dbFile = process.cwd() + "\\db.json";
