@@ -34,6 +34,6 @@ export const wordCounterHandler = async (req: Request, res: Response, next: Next
     
         res
             .status(StatusCodes.OK)
-            .send(result);
+            .send('data proceeded successfully');
     }
 }

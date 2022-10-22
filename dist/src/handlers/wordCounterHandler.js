@@ -60,7 +60,7 @@ const wordCounterHandler = (req, res, next) => __awaiter(void 0, void 0, void 0,
         fs.writeFileSync(dbFile, JSON.stringify(result));
         res
             .status(http_status_codes_1.StatusCodes.OK)
-            .send(result);
+            .send('data proceeded successfully');
     }
 });
 exports.wordCounterHandler = wordCounterHandler;
