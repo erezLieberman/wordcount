@@ -44,7 +44,6 @@ export const getData = async (value: string, type: string, next: NextFunction): 
 
 export const addWordsToDB = (dataAsWords: string[], result: Result): void => {
     dataAsWords.forEach((word: string) => {
-        word = cleanUpString(word);
 
         if (isNotEmpty(word)) {
             if (word in result) {
