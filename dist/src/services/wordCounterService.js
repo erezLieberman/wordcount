@@ -78,6 +78,7 @@ const getData = (value, type, next) => __awaiter(void 0, void 0, void 0, functio
 exports.getData = getData;
 const addWordsToDB = (dataAsWords, result) => {
     dataAsWords.forEach((word) => {
+        word = (0, utils_1.cleanUpString)(word);
         if ((0, utils_1.isNotEmpty)(word)) {
             if (word in result) {
                 result[word] = result[word] + 1;

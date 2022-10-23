@@ -1,8 +1,8 @@
 import { StatusCodes } from "http-status-codes";
 import * as fs from 'fs';
-import { cleanUpString, getDataFromDbFile } from "../utils/utils";
+import { getDataFromDbFile } from "../utils/utils";
 import dotenv from 'dotenv';
-import { addWordsToDB, getData, validateWordCounterBody } from "../services/wordCounterService";
+import { addWordsToDB as addWordsToResult, getData, validateWordCounterBody } from "../services/wordCounterService";
 import { NextFunction, Request, Response } from 'express';
 
 dotenv.config();
@@ -26,9 +26,9 @@ export const wordCounterHandler = async (req: Request, res: Response, next: Next
     if(data){
         const result = getDataFromDbFile();
 
-        const dataAsWords = cleanUpString(data).split(" ");
+        const dataAsWords = data.split(" ");
     
-        addWordsToDB(dataAsWords, result)
+        addWordsToResult(dataAsWords, result)
     
         fs.writeFileSync(dbFile, JSON.stringify(result));
     
