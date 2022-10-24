@@ -1,13 +1,9 @@
 import { StatusCodes } from "http-status-codes";
-import * as fs from 'fs';
-import { getDataFromDbFile } from "../utils/utils";
 import dotenv from 'dotenv';
-import { addWordsToDB as addWordsToResult, getData, validateWordCounterBody } from "../services/wordCounterService";
+import { processData, validateWordCounterBody } from "../services/wordCounterService";
 import { NextFunction, Request, Response } from 'express';
 
 dotenv.config();
-
-const dbFile = process.cwd() + "\\db.json"
 
 export const wordCounterHandler = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 
@@ -20,18 +16,12 @@ export const wordCounterHandler = async (req: Request, res: Response, next: Next
             .send(isNotValidMessage);
         return;
     }
-
-    let data = await getData(value, type, next);
-
-    if(data){
-        const result = getDataFromDbFile();
-
-        const dataAsWords = data.split(" ");
+   
+    let data = await processData(value, type, next);
     
-        addWordsToResult(dataAsWords, result)
-    
-        fs.writeFileSync(dbFile, JSON.stringify(result));
-    
+    if(data instanceof Error){
+        next(data);
+    }else{
         res
             .status(StatusCodes.OK)
             .send('data proceeded successfully');

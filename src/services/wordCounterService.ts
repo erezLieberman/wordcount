@@ -2,24 +2,29 @@ import axios from "axios";
 import { InputTypes, Result } from "../types/types";
 import dotenv from 'dotenv';
 import * as fs from 'fs';
-import { cleanUpString, isNotEmpty, isString } from "../utils/utils";
+import { cleanUpString, getDataFromDbFile, isNotEmpty, isString } from "../utils/utils";
 import { NextFunction } from "express";
+import stream, { Readable } from 'stream';
 
 dotenv.config();
 const XApiKey = process.env.XApiKey;
+const dbFile = process.cwd() + "\\db.json"
 
-//TODO add return type of all functions
-export const getData = async (value: string, type: string, next: NextFunction): Promise<string | undefined> => {
-    
-    // i set the data as empty string to avoid ts error of "Variable 'data' is used before being assigned.ts(2454)"
-    let data: string = '';
+export const processData = async (value: string, type: string, next: NextFunction) => {
 
     if (type === InputTypes.STRING) {
-        data = value;
+        try {
+            const reader = Readable.from([value]);
+            return handleDataWithChunks(reader, next);
+        } catch (e) {
+            next(e);
+            return;
+        }
     }
     else if (type === InputTypes.FILE) {
         try {
-            data = fs.readFileSync(value).toString();
+            const reader = fs.createReadStream(value, { highWaterMark: 1048576 });
+            return handleDataWithChunks(reader, next);
         } catch (e) {
             next(e);
             return;
@@ -27,19 +32,21 @@ export const getData = async (value: string, type: string, next: NextFunction): 
     }
     else if (type === InputTypes.URL) {
         try {
-            const response = await axios.get(value, {
+            const response = await axios({
+                method: 'get',
+                url: value,
+                responseType: 'stream',
                 headers: {
                     'X-Api-Key': XApiKey,
                 }
             });
-            data = response.data;
+            const reader = response.data;
+            return handleDataWithChunks(reader, next);
         } catch (e) {
             next(e);
             return;
         }
     }
-
-    return data;
 }
 
 export const addWordsToDB = (dataAsWords: string[], result: Result): void => {
@@ -74,4 +81,30 @@ export const validateWordCounterBody = (value: any, type: InputTypes) => {
     if (!(isString(value))) {
         return 'value have to be string';
     }
+}
+
+const handleDataWithChunks = async (reader: stream.Readable, next: NextFunction) => {
+    const result = await getDataFromDbFile();
+    let counter = 0;
+
+    const newPromise = new Promise((resolve, reject) => {
+        console.time(`Time to handle all chunks`);
+        reader.on('data', function (chunk) {
+            counter++;
+            console.time(`Time to handle chunk #${counter}`);
+            const dataAsWords = chunk.toString().split(" ");
+            addWordsToDB(dataAsWords, result)
+            fs.writeFileSync(dbFile, JSON.stringify(result));
+            console.timeEnd(`Time to handle chunk #${counter}`);
+        });
+
+        reader.on('end', () => {
+            console.timeEnd(`Time to handle all chunks`);
+            resolve(() => { })
+        });
+        reader.on('error', (err) => resolve(err));
+    })
+    return await newPromise;
+
+
 }
