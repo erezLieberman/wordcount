@@ -88,8 +88,8 @@ const handleDataWithChunks = async (reader: stream.Readable, next: NextFunction)
     let counter = 0;
 
     const newPromise = new Promise((resolve, reject) => {
+        console.time(`Time to handle all chunks`);
         reader.on('data', function (chunk) {
-            console.time(`Time to handle all chunks`);
             counter++;
             console.time(`Time to handle chunk #${counter}`);
             const dataAsWords = chunk.toString().split(" ");
